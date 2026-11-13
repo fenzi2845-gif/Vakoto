@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vakoto — Ванильный Minecraft сервер (26.3)</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 520px;
+            width: 100%;
+            background: rgba(30, 41, 59, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 32px 36px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            text-align: center;
+        }
+        h1 { font-size: 2.2rem; margin-bottom: 8px; color: #38bdf8; }
+        p { color: #94a3b8; margin-bottom: 24px; font-size: 0.98rem; line-height: 1.4; }
+        .form-group { margin-bottom: 14px; text-align: left; }
+        label { display: block; font-size: 0.88rem; color: #cbd5e1; margin-bottom: 5px; }
+        input, textarea {
+            width: 100%; padding: 12px; background: #1e293b; border: 1px solid #334155;
+            border-radius: 8px; color: white; font-size: 0.98rem; outline: none;
+        }
+        input:focus, textarea:focus { border-color: #38bdf8; }
+        textarea { resize: vertical; height: 85px; }
+        .btn {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            background: #2563eb; color: white; text-decoration: none; padding: 14px 20px;
+            border-radius: 10px; font-size: 1.02rem; font-weight: 600; border: none;
+            cursor: pointer; width: 100%; margin-top: 12px; transition: 0.2s;
+        }
+        .btn:hover { background: #1d4ed8; transform: translateY(-1px); }
+        .btn:disabled { background: #475569; cursor: not-allowed; transform: none; }
+        .btn-discord { background: #5865F2; }
+        .btn-discord:hover { background: #4752C4; }
+        .btn-desc { background: #0284c7; }
+        .btn-desc:hover { background: #0369a1; }
+        #pending-section, #success-menu, #rejected-section { display: none; }
+        .clock-icon { font-size: 3.5rem; margin-bottom: 12px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+        .menu-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+        #info-box, #desc-box {
+            margin-top: 14px; padding: 14px; background: #1e293b; border-radius: 8px;
+            border: 1px solid #38bdf8; color: #e2e8f0; display: none; font-size: 0.95rem; text-align: left; line-height: 1.5;
+        }
+        #desc-box { border-color: #0284c7; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 1. АНКЕТА -->
+        <div id="application-section">
+            <h1>Vakoto</h1>
+            <p>Заполните анкету для доступа на ванильный сервер (версия 26.3)</p>
+            <form onsubmit="submitForm(event)">
+                <div class="form-group">
+                    <label>Ваш ник в Minecraft</label>
+                    <input type="text" id="nick" placeholder="Steve" required>
+                </div>
+                <div class="form-group">
+                    <label>Ваш Discord</label>
+                    <input type="text" id="discord" placeholder="username" required>
+                </div>
+                <div class="form-group">
+                    <label>Ваш возраст</label>
+                    <input type="number" id="age" placeholder="14" required>
+                </div>
+                <div class="form-group">
+                    <label>Почему хотите играть у нас?</label>
+                    <textarea id="about" placeholder="Расскажите о своих планах на сервере..." required></textarea>
+                </div>
+                <button type="submit" id="submit-btn" class="btn">📤 Отправить заявку</button>
+            </form>
+        </div>
+
+        <!-- 2. ОЖИДАНИЕ С ЧАСАМИ -->
+        <div id="pending-section">
+            <div class="clock-icon">⏳</div>
+            <h2 style="color: #facc15; margin-bottom: 10px;">Подождите ответа администрации</h2>
+            <p>Ваша анкета отправлена в Discord! Не закрывайте страницу — меню откроется автоматически, как только администратор примет заявку.</p>
+        </div>
+
+        <!-- 3. МЕНЮ ПОСЛЕ ПРИНЯТИЯ -->
+        <div id="success-menu">
+            <h2 style="color: #34d399; margin-bottom: 10px;">🎉 Заявка принята!</h2>
+            <p>Добро пожаловать на Vakoto! Выберите нужный раздел:</p>
+            <div class="menu-buttons">
+                <a href="https://discord.gg/Y7AHZfhNNQ" target="_blank" class="btn btn-discord">💬 Наш Дискорд</a>
+                <button class="btn" onclick="showServerInfo()">📌 IP и Версия сервера</button>
+                <button class="btn btn-desc" onclick="toggleDescription()">📋 Описание сервера</button>
+            </div>
+            
+            <div id="info-box">
+                🌐 <b>IP:</b> <code>d21.aurorix.net:25293</code> (скопирован!)<br>
+                🎮 <b>Версия:</b> <code>26.3</code>
+            </div>
+
+            <div id="desc-box">
+                <b>О сервере Vakoto:</b><br>
+                Добро пожаловать на Vakoto! Это уютный ванильный Minecraft-сервер (версия 26.3), где царит атмосфера классического выживания, дружное сообщество и полная свобода творчества. Никаких лишних приватов и модов — только чистая ваниль и честный геймплей.
+            </div>
+        </div>
+
+        <!-- 4. ЕСЛИ ОТКЛОНЕНО -->
+        <div id="rejected-section">
+            <h2 style="color: #f87171; margin-bottom: 10px;">❌ Заявка отклонена</h2>
+            <p>К сожалению, администрация отклонила вашу анкету.</p>
+        </div>
+    </div>
+
+    <script>
+        const BOT_API_URL = window.location.origin;
+
+        async function submitForm(event) {
+            event.preventDefault();
+            const btn = document.getElementById("submit-btn");
+            btn.disabled = true;
+            btn.innerText = "Отправка...";
+
+            const payload = {
+                nick: document.getElementById("nick").value,
+                discord: document.getElementById("discord").value,
+                age: document.getElementById("age").value,
+                about: document.getElementById("about").value
+            };
+
+            try {
+                const res = await fetch(`${BOT_API_URL}/submit`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+
+                if (data.status === "ok" && data.app_id) {
+                    document.getElementById("application-section").style.display = "none";
+                    document.getElementById("pending-section").style.display = "block";
+                    startPolling(data.app_id);
+                } else {
+                    alert("Ошибка сервера: " + (data.message || "неизвестная ошибка"));
+                    btn.disabled = false;
+                    btn.innerText = "📤 Отправить заявку";
+                }
+            } catch (err) {
+                alert("Не удалось связаться с ботом. Подождите 30 секунд (возможно сервер просыпается) и попробуйте снова.");
+                btn.disabled = false;
+                btn.innerText = "📤 Отправить заявку";
+            }
+        }
+
+        function startPolling(appId) {
+            const interval = setInterval(async () => {
+                try {
+                    const res = await fetch(`${BOT_API_URL}/status?id=${appId}`);
+                    const data = await res.json();
+
+                    if (data.status === "approved") {
+                        clearInterval(interval);
+                        document.getElementById("pending-section").style.display = "none";
+                        document.getElementById("success-menu").style.display = "block";
+                    } else if (data.status === "rejected") {
+                        clearInterval(interval);
+                        document.getElementById("pending-section").style.display = "none";
+                        document.getElementById("rejected-section").style.display = "block";
+                    }
+                } catch (e) {
+                    console.log("Ожидание ответа сервера...");
+                }
+            }, 3000);
+        }
+
+        function showServerInfo() {
+            navigator.clipboard.writeText("d21.aurorix.net:25293");
+            const infoBox = document.getElementById("info-box");
+            infoBox.style.display = "block";
+            document.getElementById("desc-box").style.display = "none";
+        }
+
+        function toggleDescription() {
+            const descBox = document.getElementById("desc-box");
+            if (descBox.style.display === "block") {
+                descBox.style.display = "none";
+            } else {
+                descBox.style.display = "block";
+                document.getElementById("info-box").style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
