@@ -6,7 +6,10 @@
     <title>Vakoto — Ванильный Minecraft сервер</title>
     <style>
         body {
-            background-color: #0d1117;
+            /* Зимний ночной фон с затемнением для читаемости */
+            background: linear-gradient(rgba(13, 17, 23, 0.75), rgba(13, 17, 23, 0.85)), 
+                        url('https://images.unsplash.com/photo-1517299321609-52687d1bc55a?q=80&w=1920&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
             color: #e6edf3;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             display: flex;
@@ -18,28 +21,30 @@
             box-sizing: border-box;
         }
         .card {
-            background-color: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 12px;
+            background-color: rgba(22, 27, 34, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(48, 54, 61, 0.8);
+            border-radius: 14px;
             padding: 30px;
             width: 100%;
             max-width: 440px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7);
+            text-align: center;
         }
         h1 {
             margin-top: 0;
             font-size: 24px;
-            text-align: center;
             color: #ffffff;
         }
         .subtitle {
-            text-align: center;
             color: #8b949e;
             font-size: 14px;
             margin-bottom: 24px;
         }
         label {
             display: block;
+            text-align: left;
             font-size: 13px;
             color: #8b949e;
             margin-bottom: 6px;
@@ -47,7 +52,7 @@
         }
         input, textarea {
             width: 100%;
-            background-color: #0d1117;
+            background-color: rgba(13, 17, 23, 0.8);
             border: 1px solid #30363d;
             border-radius: 8px;
             padding: 10px 12px;
@@ -71,7 +76,7 @@
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            margin-top: 20px;
+            margin-top: 15px;
             transition: background 0.2s;
             display: block;
             text-align: center;
@@ -93,20 +98,33 @@
             background-color: #388bfd;
         }
         .btn-secondary {
-            background-color: #21262d;
+            background-color: rgba(33, 38, 45, 0.9);
             color: #c9d1d9;
             border: 1px solid #30363d;
-            margin-top: 10px;
         }
         .btn-secondary:hover {
             background-color: #30363d;
         }
+        .spinner {
+            border: 4px solid #30363d;
+            border-top: 4px solid #2f81f7;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
         .info-box {
-            background-color: #0d1117;
+            background-color: rgba(13, 17, 23, 0.9);
             border: 1px solid #30363d;
             border-radius: 8px;
             padding: 14px;
-            margin-bottom: 14px;
+            margin-top: 12px;
+            text-align: left;
         }
         .info-label {
             font-size: 12px;
@@ -134,20 +152,14 @@
             background: #30363d;
         }
         #desc-box {
-            display: none;
-            background-color: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 8px;
-            padding: 14px;
-            margin-top: 12px;
             font-size: 14px;
             line-height: 1.5;
             color: #c9d1d9;
+            margin-top: 8px;
         }
         .reset-link {
             display: block;
-            text-align: center;
-            margin-top: 18px;
+            margin-top: 20px;
             font-size: 12px;
             color: #8b949e;
             cursor: pointer;
@@ -180,62 +192,100 @@
             <input type="number" id="age" placeholder="Например: 15" required>
 
             <label>Почему хотите играть у нас?</label>
-            <textarea id="about" placeholder="Расскажите немного о себе и своих планах на сервере..." required></textarea>
+            <textarea id="about" placeholder="Расскажите немного о себе и своих планах..." required></textarea>
 
             <button type="submit" class="btn btn-primary" id="submit-btn">Отправить заявку</button>
         </form>
     </div>
 
-    <!-- БЛОК 2: ГЛАВНОЕ МЕНЮ (ПОСЛЕ ОТПРАВКИ) -->
-    <div id="menu-section" class="hidden">
-        <h1>Добро пожаловать на Vakoto!</h1>
-        <p class="subtitle">Ваша заявка отправлена на рассмотрение администрации.</p>
+    <!-- БЛОК 2: ОЖИДАНИЕ ОТВЕТА АДМИНИСТРАЦИИ -->
+    <div id="waiting-section" class="hidden">
+        <h1>Заявка отправлена!</h1>
+        <p class="subtitle">Ожидайте ответа администрации. Страница обновится автоматически, как только заявку одобрят.</p>
+        <div class="spinner"></div>
+        <p style="font-size: 13px; color: #8b949e;">Проверяем статус заявки...</p>
+        <span class="reset-link" onclick="resetForm()">Подать заявку заново / Изменить данные</span>
+    </div>
 
-        <div class="info-box">
-            <div class="info-label">IP-адрес сервера (Версия 26.3)</div>
+    <!-- БЛОК 3: ГЛАВНОЕ МЕНЮ ПОСЛЕ ОДОБРЕНИЯ -->
+    <div id="menu-section" class="hidden">
+        <h1>Заявка одобрена! 🎉</h1>
+        <p class="subtitle">Добро пожаловать на ванильный сервер Vakoto!</p>
+
+        <!-- Кнопка Дискорд -->
+        <a href="https://discord.gg/Y7AHZfhNNQ" target="_blank" class="btn btn-blue">💬 Наш Дискорд</a>
+
+        <!-- Кнопка IP сервера (с выпадающим блоком) -->
+        <button class="btn btn-secondary" onclick="toggleIP()">🌐 IP сервера</button>
+        <div id="ip-box" class="info-box hidden">
+            <div class="info-label">IP-адрес и версия (26.3)</div>
             <div class="info-value">
                 <span id="server-ip">d21.aurorix.net:25293</span>
                 <button class="copy-btn" onclick="copyIP()">Копировать</button>
             </div>
         </div>
 
-        <a href="https://discord.gg/Y7AHZfhNNQ" target="_blank" class="btn btn-blue">Перейти в наш Discord</a>
-
+        <!-- Кнопка Описание (с выпадающим блоком) -->
         <button class="btn btn-secondary" onclick="toggleDesc()">📋 Описание сервера</button>
-        <div id="desc-box">
+        <div id="desc-box" class="info-box hidden">
             <strong>О сервере Vakoto:</strong><br>
-            Добро пожаловать на Vakoto! Это уютный ванильный Minecraft-сервер (версия 26.3), где царит атмосфера классического выживания, дружное сообщество и полная свобода творчества. Никаких лишних приватов и модов — только чистая ванила и честный геймплей.
+            Уютный ванильный Minecraft-сервер (версия 26.3), где царит атмосфера классического выживания, дружное сообщество и полная свобода творчества. Никаких лишних приватов и модов — только чистая ваниль!
         </div>
 
-        <span class="reset-link" onclick="resetForm()">Подать заявку заново</span>
+        <span class="reset-link" onclick="resetForm()">Сбросить статус</span>
     </div>
 </div>
 
 <script>
     const formSection = document.getElementById('form-section');
+    const waitingSection = document.getElementById('waiting-section');
     const menuSection = document.getElementById('menu-section');
     const form = document.getElementById('whitelist-form');
     const submitBtn = document.getElementById('submit-btn');
 
-    // Проверяем при загрузке, отправлял ли игрок анкету ранее
-    if (localStorage.getItem('vakoto_submitted') === 'true') {
+    let checkInterval = null;
+    const savedAppId = localStorage.getItem('vakoto_app_id');
+    const isSubmitted = localStorage.getItem('vakoto_submitted');
+
+    if (isSubmitted === 'true') {
         showMenu();
+    } else if (savedAppId) {
+        showWaiting(savedAppId);
+    }
+
+    function showWaiting(appId) {
+        formSection.classList.add('hidden');
+        menuSection.classList.add('hidden');
+        waitingSection.classList.remove('hidden');
+        
+        if (checkInterval) clearInterval(checkInterval);
+        checkInterval = setInterval(() => checkStatus(appId), 4000);
     }
 
     function showMenu() {
+        if (checkInterval) clearInterval(checkInterval);
         formSection.classList.add('hidden');
+        waitingSection.classList.add('hidden');
         menuSection.classList.remove('hidden');
     }
 
     function resetForm() {
+        if (checkInterval) clearInterval(checkInterval);
+        localStorage.removeItem('vakoto_app_id');
         localStorage.removeItem('vakoto_submitted');
         menuSection.classList.add('hidden');
+        waitingSection.classList.add('hidden');
         formSection.classList.remove('hidden');
     }
 
+    function toggleIP() {
+        const ipBox = document.getElementById('ip-box');
+        ipBox.classList.toggle('hidden');
+    }
+
     function toggleDesc() {
-        const desc = document.getElementById('desc-box');
-        desc.style.display = desc.style.display === 'block' ? 'none' : 'block';
+        const descBox = document.getElementById('desc-box');
+        descBox.classList.toggle('hidden');
     }
 
     function copyIP() {
@@ -243,6 +293,23 @@
         navigator.clipboard.writeText(ip).then(() => {
             alert('IP-адрес скопирован: ' + ip);
         });
+    }
+
+    async function checkStatus(appId) {
+        try {
+            const response = await fetch('/status?id=' + appId);
+            const data = await response.json();
+            
+            if (data.status === 'approved') {
+                localStorage.setItem('vakoto_submitted', 'true');
+                showMenu();
+            } else if (data.status === 'rejected') {
+                alert('К сожалению, ваша заявка была отклонена администрацией.');
+                resetForm();
+            }
+        } catch (e) {
+            console.log('Ошибка проверки статуса');
+        }
     }
 
     form.addEventListener('submit', async (e) => {
@@ -264,12 +331,13 @@
                 body: JSON.stringify(data)
             });
 
-            if (response.ok) {
-                localStorage.setItem('vakoto_submitted', 'true');
-                showMenu();
+            const result = await response.json();
+
+            if (response.ok && result.app_id) {
+                localStorage.setItem('vakoto_app_id', result.app_id);
+                showWaiting(result.app_id);
             } else {
-                const errText = await response.text();
-                alert('Ошибка сервера: ' + errText);
+                alert('Ошибка: ' + (result.message || 'Не удалось отправить'));
             }
         } catch (error) {
             alert('Ошибка соединения с сервером.');
