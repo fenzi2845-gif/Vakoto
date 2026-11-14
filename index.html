@@ -171,16 +171,16 @@
 
         <form id="whitelist-form">
             <label>Ваш ник в Minecraft</label>
-            <input type="text" id="mc_nick" placeholder="Например: Steve" required>
+            <input type="text" id="nick" placeholder="Например: Steve" required>
 
             <label>Ваш Discord</label>
-            <input type="text" id="discord_tag" placeholder="Например: steve_play" required>
+            <input type="text" id="discord" placeholder="Например: steve_play" required>
 
             <label>Ваш возраст</label>
             <input type="number" id="age" placeholder="Например: 15" required>
 
             <label>Почему хотите играть у нас?</label>
-            <textarea id="reason" placeholder="Расскажите немного о себе и своих планах на сервере..." required></textarea>
+            <textarea id="about" placeholder="Расскажите немного о себе и своих планах на сервере..." required></textarea>
 
             <button type="submit" class="btn btn-primary" id="submit-btn">Отправить заявку</button>
         </form>
@@ -204,7 +204,7 @@
         <button class="btn btn-secondary" onclick="toggleDesc()">📋 Описание сервера</button>
         <div id="desc-box">
             <strong>О сервере Vakoto:</strong><br>
-            Добро пожаловать на Vakoto! Это уютный ванильный Minecraft-сервер (версия 26.3), где царит атмосфера классического выживания, дружное сообщество и полная свобода творчества. Никаких лишних приватов и модов — только чистая ваниль и честный геймплей.
+            Добро пожаловать на Vakoto! Это уютный ванильный Minecraft-сервер (версия 26.3), где царит атмосфера классического выживания, дружное сообщество и полная свобода творчества. Никаких лишних приватов и модов — только чистая ванила и честный геймплей.
         </div>
 
         <span class="reset-link" onclick="resetForm()">Подать заявку заново</span>
@@ -217,7 +217,7 @@
     const form = document.getElementById('whitelist-form');
     const submitBtn = document.getElementById('submit-btn');
 
-    // Проверяем при загрузке страницы, отправлял ли игрок анкету ранее
+    // Проверяем при загрузке, отправлял ли игрок анкету ранее
     if (localStorage.getItem('vakoto_submitted') === 'true') {
         showMenu();
     }
@@ -251,10 +251,10 @@
         submitBtn.innerText = 'Отправка...';
 
         const data = {
-            mc_nick: document.getElementById('mc_nick').value,
-            discord_tag: document.getElementById('discord_tag').value,
+            nick: document.getElementById('nick').value,
+            discord: document.getElementById('discord').value,
             age: document.getElementById('age').value,
-            reason: document.getElementById('reason').value
+            about: document.getElementById('about').value
         };
 
         try {
@@ -265,7 +265,6 @@
             });
 
             if (response.ok) {
-                // Сохраняем статус в браузер и переключаем на главное меню
                 localStorage.setItem('vakoto_submitted', 'true');
                 showMenu();
             } else {
